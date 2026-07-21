@@ -66,6 +66,51 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+    - sounds/crushedface.mp3
+    - sounds/do it.mp3
+    - sounds/fightsong.mp3
+    - sounds/godblessyou.mp3
+    - sounds/hobnail.mp3
+    - sounds/shitmind.mp3
+    - sounds/sonofa.mp3
+    - sounds/sound2.mp3
+    - sounds/sound4.mp3
+    - sounds/sound6.mp3
+    - sounds/sound7.mp3
+    - sounds/sound8.mp3
+    - sounds/sound10.mp3
+    - sounds/sound11.mp3
+    - sounds/sound12.mp3
+    - sounds/sound14.mp3
+    - sounds/sound15.mp3
+    - sounds/sound16.mp3
+    - sounds/sound17.mp3
+    - sounds/sound18.mp3
+    - sounds/sound19.mp3
+    - sounds/sound20.mp3
+    - sounds/sound21.mp3
+    - sounds/sound22.mp3
+    - sounds/sound23.mp3
+    - sounds/sound24.mp3
+    - sounds/sound25.mp3
+    - sounds/sound26.mp3
+    - sounds/sound27.mp3
+    - sounds/sound28.mp3
+    - sounds/sound29.mp3
+    - sounds/sound30.mp3
+    - sounds/sound31.mp3
+    - sounds/sound32.mp3
+    - sounds/sound33.mp3
+    - sounds/sound34.mp3
+    - sounds/sound35.mp3
+    - sounds/sound36.mp3
+    - sounds/sound37.mp3
+    - sounds/sound38.mp3
+    - sounds/sound39.mp3
+    - sounds/sound42.mp3
+    - sounds/sound43.mp3
+    - sounds/valdimir.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -5,46 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Where da Gold at</title>
     <style>
+        :root {
+            --bg-0: #05060a;
+            --bg-1: #0b0e17;
+            --panel: #11141f;
+            --border: #232838;
+            --text: #e8ecf7;
+            --text-dim: #8b93a8;
+            --c1: #00f0ff;
+            --c2: #ff2ec4;
+            --c3: #7c5cff;
+            --c4: #ffb800;
+            --c5: #39ff88;
+            --c6: #ff5252;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
             text-align: center;
-            background-color: #125715;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 10%, rgba(124, 92, 255, 0.18), transparent 40%),
+                radial-gradient(circle at 85% 0%, rgba(0, 240, 255, 0.14), transparent 45%),
+                radial-gradient(circle at 50% 100%, rgba(255, 46, 196, 0.10), transparent 50%),
+                var(--bg-0);
+            padding: 28px 16px 48px;
+        }
+
+        header {
+            margin-bottom: 24px;
         }
 
         h1 {
-            font-size: 12px;
-            color: rgb(240, 255, 244);
+            font-size: 15px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin: 0 0 4px;
+            font-weight: 600;
         }
-        
+
+        .subtitle {
+            font-size: 12px;
+            color: var(--text-dim);
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            max-width: 600px;
-            margin: 5px auto;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            max-width: 1000px;
+            margin: 24px auto;
         }
+
         .button {
-            padding: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
+            --glow: var(--c1);
+            position: relative;
+            padding: 18px 10px;
+            min-height: 74px;
+            background: linear-gradient(160deg, var(--panel), var(--bg-1));
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 18px;
-            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            transition: transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 2px 6px rgba(0, 0, 0, 0.4);
         }
+
+        .button::before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            top: 6px;
+            height: 3px;
+            border-radius: 3px;
+            background: var(--glow);
+            opacity: 0.55;
+            box-shadow: 0 0 8px var(--glow);
+        }
+
         .button:hover {
-            background-color: #45a049;
+            border-color: var(--glow);
+            box-shadow: 0 0 18px -2px var(--glow), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0) scale(0.97);
+        }
+
+        .button.playing {
+            border-color: var(--glow);
+            background: linear-gradient(160deg, var(--panel), #171b2b);
+            box-shadow: 0 0 26px 2px var(--glow), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+            animation: pulse 1.1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 18px 0 var(--glow), inset 0 0 0 1px rgba(255,255,255,0.05); }
+            50% { box-shadow: 0 0 30px 4px var(--glow), inset 0 0 0 1px rgba(255,255,255,0.08); }
+        }
+
+        .lep {
+            margin-top: 32px;
+            opacity: 0.9;
+        }
+
+        .lep img {
+            max-width: 220px;
+            border-radius: 10px;
+            box-shadow: 0 0 24px rgba(124, 92, 255, 0.25);
         }
     </style>
 </head>
 <body>
-<h1>(CLICK TO PLAY / STOP)</h1>
-    
+    <header>
+        <h1>Click a pad to play / stop</h1>
+        <div class="subtitle">Digital Sound Board</div>
+    </header>
+
     <div class="grid" id="soundboard"></div>
+
+    <div class="lep">
+        <img src="LEP.PNG" alt="">
+    </div>
 
     <script>
         const sounds = [
-         
+
               { file: 'sound7.mp3', label: 'GOLD' },
             { file: 'sound4.mp3', label: 'LEPRECHAUN' },
             { file: 'sound8.mp3', label: 'FLUET' },
@@ -53,21 +154,21 @@
             { file: 'hobnail.mp3', label: 'HOBNAIL BOOT' },
             { file: 'crushedface.mp3', label: 'CRUSHED FACE' },
             { file: 'sound35.mp3', label: 'BACON EGG CHEESE' },
-            
-            
-            
+
+
+
             { file: 'godblessyou.mp3', label: 'BLESS YOU' },
             { file: 'sonofa.mp3', label: 'SON OF A..' },
             { file: 'shitmind.mp3', label: 'SHIT MIND' },
             { file: 'fightsong.mp3', label: 'FIGHT SONG' },
-            
-            
+
+
             { file: 'do it.mp3', label: 'DO IT' },
             { file: 'sound2.mp3', label: 'TOOLS' },
             { file: 'sound10.mp3', label: 'WHISTLE TIPS' },
             { file: 'sound11.mp3', label: 'WOO WOO' },
             { file: 'sound12.mp3', label: 'DECORATION' },
-            
+
             { file: 'sound14.mp3', label: 'COLD POP' },
             { file: 'sound15.mp3', label: 'ITS A FIRE' },
             { file: 'sound16.mp3', label: 'AINT NOBODY' },
@@ -76,12 +177,12 @@
             { file: 'sound18.mp3', label: 'LIMIT ON TALKING' },
             { file: 'sound19.mp3', label: 'JOKES' },
             { file: 'sound20.mp3', label: 'BOGGITY' },
-            
+
             { file: 'sound21.mp3', label: 'SIENFIELD' },
             { file: 'sound22.mp3', label: 'AIR HORN' },
             { file: 'sound23.mp3', label: 'PBJ TIME' },
             { file: 'sound24.mp3', label: 'TURN DOWN' },
-            
+
             { file: 'sound25.mp3', label: 'GOING STREAKING' },
             { file: 'sound26.mp3', label: 'GONG' },
             { file: 'sound27.mp3', label: 'DIDDY DID' },
@@ -91,50 +192,75 @@
             { file: 'sound30.mp3', label: 'AT THIS MOMENT' },
             { file: 'sound31.mp3', label: 'TRUMP COME' },
             { file: 'sound32.mp3', label: 'WHAT THE HELL' },
-            
+
             { file: 'sound33.mp3', label: 'AIR HORN' },
             { file: 'sound34.mp3', label: 'NEED $$' },
-            
+
 
             { file: 'sound35.mp3', label: 'BACON EGG CHEESE' },
             { file: 'sound36.mp3', label: 'TRUMP SONG' },
             { file: 'sound37.mp3', label: 'TRUMP COME' },
             { file: 'sound38.mp3', label: 'EATING THE DOGS' },
-            
-            
+
+
             { file: 'sound39.mp3', label: 'EATTING THE PETS' },
             { file: 'sound42.mp3', label: 'LETS GET READY' },
             { file: 'sound43.mp3', label: 'TRUMP ZELENSKY ' },
-        
+
         ];
 
-        const soundboard = document.getElementById('soundboard');
-        let currentAudio = null;
+        const glowColors = ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6'];
 
-        sounds.forEach((sound) => {
+        const soundboard = document.getElementById('soundboard');
+
+        sounds.forEach((sound, i) => {
             const button = document.createElement('button');
+            button.type = 'button';
             button.className = 'button';
             button.textContent = sound.label;
+            button.style.setProperty('--glow', `var(${glowColors[i % glowColors.length]})`);
 
-            button.onclick = () => {
-                if (currentAudio && !currentAudio.paused) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                    currentAudio = null;
-                } else {
-                    currentAudio = new Audio(`sounds/${sound.file}`);
-                    currentAudio.play();
-                }
+            const audio = new Audio(`sounds/${sound.file}`);
+
+            const startSound = () => {
+                audio.currentTime = 0;
+                audio.play();
+                button.classList.add('playing');
             };
+
+            const stopSound = () => {
+                audio.pause();
+                audio.currentTime = 0;
+                button.classList.remove('playing');
+            };
+
+            button.addEventListener('pointerdown', (e) => {
+                try {
+                    button.setPointerCapture(e.pointerId);
+                } catch (err) {
+                    // Capture is only a reliability nicety for release detection;
+                    // still play the sound if it isn't available.
+                }
+                startSound();
+            });
+            button.addEventListener('pointerup', stopSound);
+            button.addEventListener('pointercancel', stopSound);
+
+            // Keep the pads usable from the keyboard (Enter / Space).
+            button.addEventListener('keydown', (e) => {
+                if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                    e.preventDefault();
+                    startSound();
+                }
+            });
+            button.addEventListener('keyup', (e) => {
+                if (e.key === ' ' || e.key === 'Enter') stopSound();
+            });
+
+            audio.addEventListener('ended', () => button.classList.remove('playing'));
 
             soundboard.appendChild(button);
         });
     </script>
-
-    <div>
-        <img src="LEP.PNG" alt="">
-    </div>
 </body>
 </html>
-
-
