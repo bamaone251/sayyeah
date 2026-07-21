@@ -212,34 +212,52 @@
         const glowColors = ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6'];
 
         const soundboard = document.getElementById('soundboard');
-        let currentAudio = null;
-        let currentButton = null;
 
         sounds.forEach((sound, i) => {
             const button = document.createElement('button');
+            button.type = 'button';
             button.className = 'button';
             button.textContent = sound.label;
             button.style.setProperty('--glow', `var(${glowColors[i % glowColors.length]})`);
 
-            button.onclick = () => {
-                if (currentAudio && !currentAudio.paused) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                    currentAudio = null;
-                    if (currentButton) currentButton.classList.remove('playing');
-                    currentButton = null;
-                } else {
-                    currentAudio = new Audio(`sounds/${sound.file}`);
-                    currentAudio.play();
-                    currentButton = button;
-                    button.classList.add('playing');
-                    currentAudio.addEventListener('ended', () => {
-                        button.classList.remove('playing');
-                        currentAudio = null;
-                        currentButton = null;
-                    });
-                }
+            const audio = new Audio(`sounds/${sound.file}`);
+
+            const startSound = () => {
+                audio.currentTime = 0;
+                audio.play();
+                button.classList.add('playing');
             };
+
+            const stopSound = () => {
+                audio.pause();
+                audio.currentTime = 0;
+                button.classList.remove('playing');
+            };
+
+            button.addEventListener('pointerdown', (e) => {
+                try {
+                    button.setPointerCapture(e.pointerId);
+                } catch (err) {
+                    // Capture is only a reliability nicety for release detection;
+                    // still play the sound if it isn't available.
+                }
+                startSound();
+            });
+            button.addEventListener('pointerup', stopSound);
+            button.addEventListener('pointercancel', stopSound);
+
+            // Keep the pads usable from the keyboard (Enter / Space).
+            button.addEventListener('keydown', (e) => {
+                if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                    e.preventDefault();
+                    startSound();
+                }
+            });
+            button.addEventListener('keyup', (e) => {
+                if (e.key === ' ' || e.key === 'Enter') stopSound();
+            });
+
+            audio.addEventListener('ended', () => button.classList.remove('playing'));
 
             soundboard.appendChild(button);
         });

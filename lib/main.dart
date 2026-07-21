@@ -92,30 +92,36 @@ class SoundboardScreen extends StatefulWidget {
 }
 
 class _SoundboardScreenState extends State<SoundboardScreen> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  int? _playingIndex;
+  late final List<AudioPlayer> _players =
+      List.generate(_sounds.length, (_) => AudioPlayer());
+  final Set<int> _playingIndices = {};
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer.onPlayerComplete.listen((_) {
-      setState(() => _playingIndex = null);
-    });
+    for (var index = 0; index < _players.length; index++) {
+      _players[index].onPlayerComplete.listen((_) {
+        if (mounted) setState(() => _playingIndices.remove(index));
+      });
+    }
   }
 
-  Future<void> _onPadTap(int index) async {
-    if (_playingIndex != null) {
-      await _audioPlayer.stop();
-      setState(() => _playingIndex = null);
-      return;
-    }
-    setState(() => _playingIndex = index);
-    await _audioPlayer.play(AssetSource('sounds/${_sounds[index].file}'));
+  Future<void> _onPressStart(int index) async {
+    setState(() => _playingIndices.add(index));
+    await _players[index].stop();
+    await _players[index].play(AssetSource('sounds/${_sounds[index].file}'));
+  }
+
+  Future<void> _onPressEnd(int index) async {
+    setState(() => _playingIndices.remove(index));
+    await _players[index].stop();
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    for (final player in _players) {
+      player.dispose();
+    }
     super.dispose();
   }
 
@@ -149,12 +155,13 @@ class _SoundboardScreenState extends State<SoundboardScreen> {
           itemCount: _sounds.length,
           itemBuilder: (context, index) {
             final glow = _glowColors[index % _glowColors.length];
-            final isPlaying = _playingIndex == index;
+            final isPlaying = _playingIndices.contains(index);
             return _SoundPad(
               label: _sounds[index].label,
               glow: glow,
               isPlaying: isPlaying,
-              onTap: () => _onPadTap(index),
+              onPressStart: () => _onPressStart(index),
+              onPressEnd: () => _onPressEnd(index),
             );
           },
         ),
@@ -167,22 +174,26 @@ class _SoundPad extends StatelessWidget {
   final String label;
   final Color glow;
   final bool isPlaying;
-  final VoidCallback onTap;
+  final VoidCallback onPressStart;
+  final VoidCallback onPressEnd;
 
   const _SoundPad({
     required this.label,
     required this.glow,
     required this.isPlaying,
-    required this.onTap,
+    required this.onPressStart,
+    required this.onPressEnd,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+    return Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: (_) => onPressStart(),
+      onPointerUp: (_) => onPressEnd(),
+      onPointerCancel: (_) => onPressEnd(),
+      child: Material(
+        color: Colors.transparent,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
